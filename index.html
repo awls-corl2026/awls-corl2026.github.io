@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AWLS — Advantage-Weighted Latent Steering</title>
+<meta name="description" content="AWLS: Advantage-Weighted Latent Steering for One-Step Generative Robotic Manipulation Policies. CoRL 2026." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,300..800;1,400..600&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --bg:#ffffff; --ink:#0d1117; --ink-2:#3b424d; --dim:#6b7280;
+  --line:#e3e6ea; --line-2:#d0d7de; --btn:#1b1f24; --btn-h:#000; --soft:#f6f7f9;
+  --maxw:900px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:"Hanken Grotesk",sans-serif;
+  font-weight:400;line-height:1.65;-webkit-font-smoothing:antialiased}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+.wide{max-width:1040px}
+.mono{font-family:"JetBrains Mono",monospace}
+a{color:inherit}
+::selection{background:var(--ink);color:#fff}
+
+/* nav */
+nav{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.86);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:54px;max-width:1040px}
+.brand{font-weight:800;letter-spacing:-.01em;font-size:18px}
+.nl{display:flex;gap:22px;font-size:14px}
+.nl a{text-decoration:none;color:var(--dim);transition:.2s}
+.nl a:hover{color:var(--ink)}
+@media(max-width:680px){.nl{display:none}}
+
+/* hero */
+header{padding:56px 0 40px;text-align:center}
+h1{font-weight:800;font-size:clamp(27px,3.9vw,39px);line-height:1.2;letter-spacing:-.02em;max-width:none;margin:0 auto}
+.venue{margin-top:16px;font-size:15px;color:var(--dim)}
+.venue b{color:var(--ink-2);font-weight:600}
+.authors{margin-top:22px;font-size:18px;line-height:1.9}
+.authors a{color:var(--ink);text-decoration:none;border-bottom:1px solid transparent;transition:.2s}
+.authors a:hover{border-color:var(--ink)}
+.authors sup{font-size:.7em;color:var(--dim)}
+.affil{margin-top:6px;font-size:14.5px;color:var(--dim)}
+.affil sup{font-size:.85em}
+.note-eq{margin-top:6px;font-size:13px;color:var(--dim)}
+
+/* link pill buttons */
+.links{display:flex;flex-wrap:wrap;gap:11px;justify-content:center;margin-top:26px}
+.lbtn{display:inline-flex;align-items:center;gap:9px;background:var(--btn);color:#fff;text-decoration:none;
+  font-size:15px;font-weight:500;padding:10px 19px;border-radius:40px;transition:.22s;border:1px solid var(--btn)}
+.lbtn:hover{background:var(--btn-h);transform:translateY(-2px);box-shadow:0 8px 20px -10px rgba(0,0,0,.5)}
+.lbtn svg{width:17px;height:17px;fill:#fff}
+.lbtn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line-2)}
+.lbtn.ghost svg{fill:var(--ink)}
+.lbtn.ghost:hover{background:var(--soft);border-color:var(--ink)}
+.lbtn.static{cursor:default;color:var(--ink-2)}
+.lbtn.static:hover{transform:none;box-shadow:none;background:#fff;border-color:var(--line-2)}
+
+/* sections */
+section{padding:46px 0;border-top:1px solid var(--line)}
+h2{text-align:center;font-weight:800;font-size:clamp(24px,3.2vw,32px);letter-spacing:-.02em;margin-bottom:8px}
+.lead{text-align:center;color:var(--dim);font-size:15px;max-width:62ch;margin:0 auto 26px}
+.lead .mono{font-size:13px}
+.prose{font-size:17.5px;color:#22272e}
+.prose.abs{font-family:"Newsreader",serif;font-size:19.5px;line-height:1.7;color:#1f242b}
+.prose.abs i{color:var(--ink)}
+.prose b{font-weight:700;color:var(--ink)}
+.prose .mono{font-size:15px;background:var(--soft);border:1px solid var(--line);padding:1px 6px;border-radius:5px}
+.center{text-align:center}
+
+/* video elements */
+.vid{position:relative;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#000}
+.vid video{display:block;width:100%;aspect-ratio:16/10;object-fit:cover;background:#000}
+.task video{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:#000}
+.feature{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#000;max-width:1040px;margin:0 auto;box-shadow:0 24px 60px -40px rgba(0,0,0,.5)}
+.feature video{display:block;width:100%;height:auto}
+.tagv{position:absolute;left:10px;top:10px;z-index:3;pointer-events:none;font-family:"JetBrains Mono";
+  font-size:10.5px;color:#fff;background:rgba(13,17,23,.72);padding:4px 9px;border-radius:30px}
+.tagv.ours{background:#fff;color:#0d1117}
+.vlabel{text-align:center;font-size:13.5px;color:var(--ink-2);padding:10px;background:#fff;border-top:1px solid var(--line)}
+.vlabel b{color:var(--ink)}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:14px}
+@media(max-width:680px){.cmp{grid-template-columns:1fr}}
+.cmp-title{text-align:center;font-weight:700;font-size:15px;margin:24px 0 2px}
+.cmp-title span{color:var(--dim);font-weight:400}
+
+/* task gallery */
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:8px}
+@media(max-width:760px){.gallery{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.gallery{grid-template-columns:1fr}}
+.task{position:relative;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff;transition:.25s}
+.task:hover{border-color:var(--ink);box-shadow:0 16px 32px -24px rgba(0,0,0,.5)}
+.task .meta{padding:13px 14px}
+.task .meta .arm{font-family:"JetBrains Mono";font-size:10.5px;color:var(--dim);text-transform:uppercase}
+.task .meta h3{font-size:16.5px;font-weight:700;margin:3px 0}
+.task .meta p{font-size:13px;color:var(--ink-2)}
+
+/* approach */
+.fig{margin:6px auto 0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--soft)}
+.fig img{display:block;width:100%}
+.ideas{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:30px}
+@media(max-width:760px){.ideas{grid-template-columns:1fr}}
+.idea{border:1px solid var(--line);border-radius:10px;padding:20px;background:#fff;transition:.25s}
+.idea:hover{border-color:var(--ink);box-shadow:0 14px 30px -22px rgba(0,0,0,.5)}
+.idea .t{font-weight:700;font-size:16.5px;margin-bottom:6px;display:flex;gap:8px;align-items:center}
+.idea .t .n{font-family:"JetBrains Mono";font-size:12px;background:var(--ink);color:#fff;width:22px;height:22px;
+  border-radius:50%;display:grid;place-items:center;flex:none}
+.idea p{font-size:14px;color:var(--ink-2)}
+
+/* results */
+.bars{max-width:680px;margin:8px auto 0;display:flex;flex-direction:column;gap:13px}
+.brow{display:grid;grid-template-columns:120px 1fr 66px;gap:14px;align-items:center}
+.brow .nm{font-size:14.5px;color:var(--ink-2)}.brow .nm.ours{color:var(--ink);font-weight:700}
+.trk{height:24px;background:var(--soft);border:1px solid var(--line);border-radius:5px;overflow:hidden}
+.fl{height:100%;width:0;background:#c2c8d0;transition:width 1.3s cubic-bezier(.2,.8,.2,1)}
+.fl.ours{background:var(--ink)}
+.brow .v{font-family:"JetBrains Mono";font-size:13px;color:var(--dim);text-align:right}
+.brow .v.ours{color:var(--ink);font-weight:600}
+.tablewrap{overflow-x:auto;margin:28px auto 0;border:1px solid var(--line);border-radius:10px;max-width:760px}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:14.5px}
+th,td{padding:11px 14px;text-align:center;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left;font-weight:600}
+thead th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--dim);background:var(--soft)}
+tbody tr:last-child td{border-bottom:none}
+tr.ours{background:var(--soft)}tr.ours td{font-weight:700}
+
+.bib{font-family:"JetBrains Mono",monospace;font-size:13px;line-height:1.6;background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:18px 20px;overflow-x:auto;white-space:pre;margin-top:8px;color:var(--ink-2)}
+footer{padding:28px 0;border-top:1px solid var(--line);text-align:center;font-size:13px;color:var(--dim)}
+.reveal{opacity:0;transform:translateY(16px);transition:.65s}.reveal.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+
+<nav><div class="wrap">
+  <div class="brand">AWLS</div>
+  <div class="nl">
+    <a href="#videos">Videos</a><a href="#results">Results</a>
+    <a href="#abstract">Abstract</a><a href="#approach">Approach</a>
+    <a href="#bibtex">BibTeX</a>
+  </div>
+</div></nav>
+
+<header><div class="wrap wide">
+  <h1>AWLS: Advantage-Weighted Latent Steering<br>for One-Step Generative Robotic Manipulation Policies</h1>
+  <div class="venue"><b>Conference on Robot Learning (CoRL) 2026</b></div>
+
+  <div class="authors">
+    <span>Jiahong Tang<sup>1,2</sup></span> &nbsp;
+    <span>Jiaju He<sup>1,2</sup></span> &nbsp;
+    <span>Zhiyuan Yang<sup>1,2</sup></span> &nbsp;
+    <span>Ruyang Han<sup>1,2</sup></span> &nbsp;
+    <span>Haiyue Zhu<sup>2,&#x2021;</sup></span>
+  </div>
+  <div class="affil"><sup>1</sup>Nanyang Technological University, Singapore &nbsp;·&nbsp; <sup>2</sup>Singapore Institute of Manufacturing Technology (SIMTech), A*STAR, Singapore</div>
+  <div class="note-eq"><sup>&#x2021;</sup>Corresponding author</div>
+
+  <div class="links">
+    <a class="lbtn" href="assets/AWLS_CoRL2026.pdf" target="_blank" rel="noopener">
+      <svg viewBox="0 0 384 512"><path d="M0 64C0 28.7 28.7 0 64 0H224V128c0 17.7 14.3 32 32 32H384V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V64zm384 64H256V0L384 128z"/></svg> Paper</a>
+    <a class="lbtn" href="#videos">
+      <svg viewBox="0 0 384 512"><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg> Video</a>
+    <a class="lbtn ghost" href="#approach">
+      <svg viewBox="0 0 576 512"><path d="M264.5 5.2c14.9-6.9 32.1-6.9 47 0l218.6 101c8.5 3.9 13.9 12.4 13.9 21.8s-5.4 17.9-13.9 21.8l-218.6 101c-14.9 6.9-32.1 6.9-47 0L45.9 149.8C37.4 145.8 32 137.3 32 128s5.4-17.9 13.9-21.8L264.5 5.2zM476.9 209.6l53.2 24.6c8.5 3.9 13.9 12.4 13.9 21.8s-5.4 17.9-13.9 21.8l-218.6 101c-14.9 6.9-32.1 6.9-47 0L45.9 277.8C37.4 273.8 32 265.3 32 256s5.4-17.9 13.9-21.8l53.2-24.6 152 70.2c23.4 10.8 50.4 10.8 73.8 0l152-70.2zm0 128 53.2 24.6c8.5 3.9 13.9 12.4 13.9 21.8s-5.4 17.9-13.9 21.8l-218.6 101c-14.9 6.9-32.1 6.9-47 0L45.9 405.8C37.4 401.8 32 393.3 32 384s5.4-17.9 13.9-21.8l53.2-24.6 152 70.2c23.4 10.8 50.4 10.8 73.8 0l152-70.2z"/></svg> Approach</a>
+    <span class="lbtn ghost static" title="Code release in preparation">
+      <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> Code — coming soon</span>
+  </div>
+</div></header>
+
+<!-- ============================ VIDEOS (first) ============================ -->
+<section id="videos"><div class="wrap wide">
+  <h2>Real-robot rollouts</h2>
+  <p class="lead">AWLS policies on all five real-world tasks — full view alongside a zoom-in. Clips are sped up and have no audio.</p>
+
+  <div class="feature reveal">
+    <video muted loop autoplay playsinline controls preload="metadata" poster="assets/tasks/task_drawer.png">
+      <source src="assets/videos/montage.mp4" type="video/mp4"></video>
+  </div>
+
+  <h2 style="margin-top:48px">Per task</h2>
+  <p class="lead">Three single-arm and two dual-arm tasks (full view shown; loops automatically).</p>
+  <div class="gallery">
+    <div class="task reveal"><video autoplay muted loop playsinline controls preload="metadata" poster="assets/tasks/task_drawer.png"><source src="assets/videos/drawer_cube.mp4" type="video/mp4"></video><div class="meta"><span class="arm">single-arm</span><h3>Drawer-Cube</h3><p>Open a drawer, place a cube, close it.</p></div></div>
+    <div class="task reveal"><video autoplay muted loop playsinline controls preload="metadata" poster="assets/tasks/task_peg_insertion.png"><source src="assets/videos/tube_insertion.mp4" type="video/mp4"></video><div class="meta"><span class="arm">single-arm</span><h3>Tube Insertion</h3><p>Remove a jar and insert a tube.</p></div></div>
+    <div class="task reveal"><video autoplay muted loop playsinline controls preload="metadata" poster="assets/tasks/task_screw_scooping.png"><source src="assets/videos/screw_scooping.mp4" type="video/mp4"></video><div class="meta"><span class="arm">single-arm</span><h3>Screw Scooping</h3><p>Scoop screws and pour into a container.</p></div></div>
+    <div class="task reveal"><video autoplay muted loop playsinline controls preload="metadata" poster="assets/tasks/task_gear_packing.png"><source src="assets/videos/gear_packing.mp4" type="video/mp4"></video><div class="meta"><span class="arm">dual-arm</span><h3>Gear Packing</h3><p>Open a box, place a gear, close it.</p></div></div>
+    <div class="task reveal"><video autoplay muted loop playsinline controls preload="metadata" poster="assets/tasks/task_ball_placement.png"><source src="assets/videos/ball_weighing.mp4" type="video/mp4"></video><div class="meta"><span class="arm">dual-arm</span><h3>Ball Weighing</h3><p>Press the scale and place the ball, two arms.</p></div></div>
+  </div>
+</div></section>
+
+<!-- ============================ RESULTS ============================ -->
+<section id="results"><div class="wrap">
+  <h2>Real-World Results</h2>
+  <p class="lead">5 real-robot tasks · 20 hardware rollouts each · no real-world rollouts during post-training · a rollout counts only if every stage completes without human intervention.</p>
+  <div class="bars reveal" id="bars">
+    <div class="brow"><span class="nm">MeanFlow</span><div class="trk"><div class="fl" data-w="45"></div></div><span class="v">45/100</span></div>
+    <div class="brow"><span class="nm">FQL</span><div class="trk"><div class="fl" data-w="51"></div></div><span class="v">51/100</span></div>
+    <div class="brow"><span class="nm">DSRL</span><div class="trk"><div class="fl" data-w="50"></div></div><span class="v">50/100</span></div>
+    <div class="brow"><span class="nm ours">AWLS (ours)</span><div class="trk"><div class="fl ours" data-w="65"></div></div><span class="v ours">65/100</span></div>
+  </div>
+  <div class="tablewrap reveal">
+    <table>
+      <thead><tr><th>Method</th><th>Drawer-Cube</th><th>Tube Ins.</th><th>Screw Scoop.</th><th>Gear Pack.</th><th>Ball Weigh.</th><th>Total</th></tr></thead>
+      <tbody>
+        <tr><td>MeanFlow</td><td>12/20</td><td>11/20</td><td>13/20</td><td>4/20</td><td>5/20</td><td>45/100</td></tr>
+        <tr><td>FQL</td><td>13/20</td><td>14/20</td><td>15/20</td><td>5/20</td><td>4/20</td><td>51/100</td></tr>
+        <tr><td>DSRL</td><td>12/20</td><td>15/20</td><td>13/20</td><td>6/20</td><td>4/20</td><td>50/100</td></tr>
+        <tr class="ours"><td>AWLS (ours)</td><td>15/20</td><td>17/20</td><td>16/20</td><td>9/20</td><td>8/20</td><td>65/100</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div></section>
+
+<!-- ============================ ABSTRACT ============================ -->
+<section id="abstract"><div class="wrap">
+  <h2>Abstract</h2>
+  <p class="prose abs reveal"><i>Human-collected real-world robotic manipulation demonstrations often contain mixed-quality trajectories</i>, including hesitant, indirect, or inefficient action segments. While diffusion- and flow-based policies can model such multimodal data, standard behavior cloning (BC) assigns equal likelihood to all demonstrated actions and may therefore reproduce suboptimal modes. Offline RL value estimates offer a natural signal for biasing policies toward higher-value behavioral modes, but directly fine-tuning the generative policy or using critic gradients for policy steering can amplify critic errors and induce prior drift. We propose <b>Advantage-Weighted Latent Steering (AWLS)</b>, an offline post-training method for improving frozen one-step generative manipulation policies without updating their decoders. AWLS learns a residual noise shaper, an observation-conditioned residual correction to the policy&rsquo;s latent noise, and trains it with an advantage-weighted action reconstruction objective. The advantages are detached, scale-normalized, and used only as supervised weights on demonstrated actions, avoiding critic-gradient policy updates while preserving fast single-step inference. We further introduce a rollout-free decoder-sensitivity criterion for selecting pretrained checkpoints that remain responsive to latent-noise perturbations. Experiments on simulated and real-world robotic manipulation tasks with clean and mixed-quality demonstrations show that AWLS improves over the frozen base policy while limiting drift from the pretrained behavior prior.</p>
+</div></section>
+
+<!-- ============================ APPROACH (pipeline) ============================ -->
+<section id="approach"><div class="wrap">
+  <h2>Approach</h2>
+  <p class="lead">Keep the decoder frozen; learn a small residual correction to its latent noise.</p>
+  <div class="fig reveal"><img src="assets/method_overview.png" alt="AWLS pipeline" /></div>
+  <p class="center" style="font-size:13.5px;color:var(--dim);margin:12px 0 22px">The AWLS pipeline: a frozen one-step decoder with a trainable residual noise shaper.</p>
+  <p class="prose reveal">AWLS treats the pretrained one-step decoder <span class="mono">G&#x3B8;</span> as fixed and inserts a lightweight, observation-conditioned <b>residual noise shaper</b> <span class="mono">T&#x3C6;(o,&#x3B5;)=&#x3B5;+&#x394;&#x3C6;(o,&#x3B5;)</span> on the latent input. Only <span class="mono">T&#x3C6;</span> is trained—the pretrained decoder parameters stay fixed and inference remains a single decode. The training signal is an <b>advantage-weighted reconstruction</b> loss: IQL advantages are detached, scale-normalized to <span class="mono">[0,1]</span>, and exponentiated into per-sample weights, so the critic never back-propagates into the policy.</p>
+  <div class="ideas">
+    <div class="idea reveal"><div class="t"><span class="n">i</span> Detached advantages</div><p>Value enters only as supervised weights on demonstrated actions, avoiding direct critic-gradient steering and limiting prior drift.</p></div>
+    <div class="idea reveal"><div class="t"><span class="n">ii</span> Residual noise shaper</div><p>A small network reshapes the latent; the decoder is frozen, so inference remains a single forward pass.</p></div>
+    <div class="idea reveal"><div class="t"><span class="n">iii</span> Sensitivity checkpoints</div><p>A rollout-free criterion selects pretrained checkpoints that stay responsive to latent-noise perturbations.</p></div>
+  </div>
+</div></section>
+
+<!-- ============================ BIBTEX ============================ -->
+<section id="bibtex"><div class="wrap">
+  <h2>BibTeX</h2>
+  <pre class="bib reveal">@inproceedings{tang2026awls,
+  title     = {{AWLS}: Advantage-Weighted Latent Steering for One-Step Generative Robotic Manipulation Policies},
+  author    = {Tang, Jiahong and He, Jiaju and Yang, Zhiyuan and Han, Ruyang and Zhu, Haiyue},
+  booktitle = {Conference on Robot Learning (CoRL)},
+  year      = {2026}
+}</pre>
+</div></section>
+
+<footer><div class="wrap">AWLS &middot; CoRL 2026</div></footer>
+
+<script>
+const io=new IntersectionObserver(es=>es.forEach((e,i)=>{if(e.isIntersecting){
+  e.target.style.transitionDelay=(e.target.closest('.ideas,.gallery,.cmp')?(i%3)*80:0)+'ms';
+  e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+const bio=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){
+  e.target.querySelectorAll('.fl').forEach(f=>f.style.width=f.dataset.w+'%');bio.disconnect();}}),{threshold:.3});
+const b=document.getElementById('bars');if(b)bio.observe(b);
+</script>
+</body>
+</html>
