@@ -94,6 +94,9 @@ h2{text-align:center;font-weight:800;font-size:clamp(24px,3.2vw,32px);letter-spa
 .task{position:relative;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff;transition:.25s}
 .task:hover{border-color:var(--ink);box-shadow:0 16px 32px -24px rgba(0,0,0,.5)}
 .task .meta{padding:13px 14px}
+.gallery.tasks{grid-template-columns:repeat(5,1fr);gap:12px}
+@media(max-width:900px){.gallery.tasks{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:520px){.gallery.tasks{grid-template-columns:1fr}}
 .task .meta .arm{font-family:"JetBrains Mono";font-size:10.5px;color:var(--dim);text-transform:uppercase}
 .task .meta h3{font-size:16.5px;font-weight:700;margin:3px 0}
 .task .meta p{font-size:13px;color:var(--ink-2)}
@@ -172,21 +175,20 @@ footer{padding:28px 0;border-top:1px solid var(--line);text-align:center;font-si
 <!-- ============================ VIDEOS (first) ============================ -->
 <section id="videos"><div class="wrap wide">
   <h2>Real-robot rollouts</h2>
-  <p class="lead">AWLS policies on all five real-world tasks — full view alongside a zoom-in. Clips are sped up and have no audio.</p>
+  <p class="lead">AWLS policies on all five real-world tasks, each shown once with a full view alongside a zoom-in. Clips are sped up and have no audio.</p>
 
   <div class="feature reveal">
     <video muted loop autoplay playsinline controls preload="metadata" poster="assets/tasks/task_drawer.png">
       <source src="assets/videos/montage.mp4" type="video/mp4"></video>
   </div>
 
-  <h2 style="margin-top:48px">Per task</h2>
-  <p class="lead">Three single-arm and two dual-arm tasks (full view shown; loops automatically).</p>
-  <div class="gallery">
-    <div class="task reveal"><video autoplay muted loop playsinline controls preload="metadata" poster="assets/tasks/task_drawer.png"><source src="assets/videos/drawer_cube.mp4" type="video/mp4"></video><div class="meta"><span class="arm">single-arm</span><h3>Drawer-Cube</h3><p>Open a drawer, place a cube, close it.</p></div></div>
-    <div class="task reveal"><video autoplay muted loop playsinline controls preload="metadata" poster="assets/tasks/task_peg_insertion.png"><source src="assets/videos/tube_insertion.mp4" type="video/mp4"></video><div class="meta"><span class="arm">single-arm</span><h3>Tube Insertion</h3><p>Remove a jar and insert a tube.</p></div></div>
-    <div class="task reveal"><video autoplay muted loop playsinline controls preload="metadata" poster="assets/tasks/task_screw_scooping.png"><source src="assets/videos/screw_scooping.mp4" type="video/mp4"></video><div class="meta"><span class="arm">single-arm</span><h3>Screw Scooping</h3><p>Scoop screws and pour into a container.</p></div></div>
-    <div class="task reveal"><video autoplay muted loop playsinline controls preload="metadata" poster="assets/tasks/task_gear_packing.png"><source src="assets/videos/gear_packing.mp4" type="video/mp4"></video><div class="meta"><span class="arm">dual-arm</span><h3>Gear Packing</h3><p>Open a box, place a gear, close it.</p></div></div>
-    <div class="task reveal"><video autoplay muted loop playsinline controls preload="metadata" poster="assets/tasks/task_ball_placement.png"><source src="assets/videos/ball_weighing.mp4" type="video/mp4"></video><div class="meta"><span class="arm">dual-arm</span><h3>Ball Weighing</h3><p>Press the scale and place the ball, two arms.</p></div></div>
+  <p class="lead" style="margin-top:34px;margin-bottom:14px">Three single-arm and two dual-arm tasks, in the order they appear above.</p>
+  <div class="gallery tasks">
+    <div class="task reveal"><div class="meta"><span class="arm">single-arm</span><h3>Drawer-Cube</h3><p>Open a drawer, place a cube, close it.</p></div></div>
+    <div class="task reveal"><div class="meta"><span class="arm">single-arm</span><h3>Tube Insertion</h3><p>Remove a jar and insert a tube.</p></div></div>
+    <div class="task reveal"><div class="meta"><span class="arm">single-arm</span><h3>Screw Scooping</h3><p>Scoop screws and pour into a container.</p></div></div>
+    <div class="task reveal"><div class="meta"><span class="arm">dual-arm</span><h3>Gear Packing</h3><p>Open a box, place a gear, close it.</p></div></div>
+    <div class="task reveal"><div class="meta"><span class="arm">dual-arm</span><h3>Ball Weighing</h3><p>Press the scale and place the ball, two arms.</p></div></div>
   </div>
 </div></section>
 
